@@ -1,0 +1,79 @@
+# ──────────────────────────────────────────────────────────────
+# Multiscale Route Hypothesis Platform — Shewanella LC6 / RC
+# ALTERNATIVE: Reactive Crimson via gentisate branch to TCA
+# ──────────────────────────────────────────────────────────────
+
+organism: Shewanella_xiamenensis_LC6
+target: reactive_crimson_decolorization
+
+gem:
+  model_path: examples/gems/LC6_CANONICAL.xml
+
+context:
+  yc: 3.0
+  dic: 0.6
+  t_max: 48.0
+  dye_conc: 100
+  temperature: 30
+
+route_hypothesis:
+  route_id: RC_gentisate_route
+  dye_code: RC
+  source: alternative_hypothesis_v1
+  description: >
+    Azoreductase-mediated reductive cleavage of Reactive Crimson,
+    producing amine fragments metabolized through gentisate pathway
+    (2,5-dihydroxybenzoate) via maleylpyruvate to fumarate and
+    pyruvate, entering TCA cycle.
+  steps:
+    - id: RC_G01
+      rxn: RC_transport
+      type: transport
+      substrates: [RC_ext]
+      products: [RC_c]
+      confidence: exact
+    - id: RC_G02
+      rxn: azo_reduction_1
+      type: reductase
+      substrates: [RC_c, NADH]
+      products: [RC_half, amine_1, NAD]
+      enzyme: AzoR
+      gene: azoR
+      ec: "1.7.1.6"
+      confidence: exact
+    - id: RC_G03
+      rxn: azo_reduction_2
+      type: reductase
+      substrates: [RC_half, NADH]
+      products: [amine_2, amine_3, NAD]
+      enzyme: AzoR
+      gene: azoR
+      ec: "1.7.1.6"
+      confidence: exact
+    - id: RC_G04
+      rxn: amine_to_gentisate
+      type: oxidase
+      substrates: [amine_2, O2, NADH]
+      products: [gentisate, NH3, NAD]
+      enzyme: NagI
+      gene: nagI
+      ec: "1.14.12.x"
+      confidence: plausible
+    - id: RC_G05
+      rxn: gentisate_ring_cleavage
+      type: dioxygenase
+      substrates: [gentisate, O2]
+      products: [maleylpyruvate]
+      enzyme: NagI
+      gene: nagI
+      ec: "1.13.11.4"
+      confidence: plausible
+    - id: RC_G06
+      rxn: maleylpyruvate_to_TCA
+      type: hydrolase
+      substrates: [maleylpyruvate, H2O]
+      products: [fumarate, pyruvate]
+      enzyme: NagL
+      gene: nagL
+      ec: "3.7.1.x"
+      confidence: plausible

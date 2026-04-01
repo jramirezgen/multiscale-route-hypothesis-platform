@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Multiscale Route Hypothesis Platform"
+version: "1.0.0"
+date-released: "2026-03-30"
+license: MIT
+repository-code: "https://github.com/jramirezgen/multiscale-route-hypothesis-platform"
+authors:
+  - family-names: "Ramirez-Bautista"
+    given-names: "J."
+keywords:
+  - metabolic modeling
+  - genome-scale model
+  - route hypothesis
+  - ODE simulation
+  - systems biology
+  - multiscale integration
+abstract: >
+  A computational framework for evaluating metabolic route hypotheses
+  through multiscale integration of ODE simulation, phenotype bridging,
+  gene expression dynamics, and omics evidence. Cross-system validated
+  across Shewanella, E. coli, and Acidithiobacillus.

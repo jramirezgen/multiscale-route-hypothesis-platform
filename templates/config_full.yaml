@@ -1,0 +1,64 @@
+# ──────────────────────────────────────────────────────────────
+# MRHP Full Config Template — All Available Options
+# ──────────────────────────────────────────────────────────────
+
+organism: YOUR_ORGANISM
+target: YOUR_TARGET
+
+context:
+  yc: 3.0            # yeast extract (g/L), 0.0 if not applicable
+  dic: 0.6           # dissolved inorganic carbon (mM), 0.0 if N/A
+  t_max: 48.0        # simulation time (h)
+  dye_conc: 100      # initial dye concentration (mg/L), 0 if N/A
+  temperature: 30    # °C
+
+route_hypothesis:
+  route_id: YOUR_ROUTE_ID
+  dye_code: ""        # MO, RC, DB, or empty for non-dye systems
+  source: user_defined
+  description: >
+    Detailed description of the metabolic route hypothesis, including
+    key enzymes and convergence to central metabolism.
+  # Optional: entry_reactions for GDP/glycolytic type routes
+  # entry_reactions:
+  #   - glucose_uptake
+  #   - glycolysis_upper
+  steps:
+    - id: STEP_01
+      rxn: reaction_1
+      type: reductase        # reductase | dioxygenase | hydrolase | transport | electron_transfer
+      substrates: [A, NADH]
+      products: [B, C, NAD]
+      enzyme: EnzymeName
+      gene: geneName
+      ec: "1.x.x.x"
+      confidence: exact       # exact | strong | plausible | speculative
+    - id: STEP_02
+      rxn: reaction_2
+      type: oxidase
+      substrates: [B, O2]
+      products: [D]
+      enzyme: EnzymeName2
+      gene: geneName2
+      ec: "1.x.x.x"
+      confidence: plausible
+
+expression:
+  enabled: true
+  simulate_hourly: true
+  genes_key:
+    - gene1
+    - gene2
+
+omics:
+  nmr: true
+  redox_balance: true
+
+# Bridge parameters (advanced, usually use defaults):
+# bridge:
+#   v4_override: {}
+#   v5_override: {}
+
+# Validation data (advanced):
+# validation:
+#   rtqpcr_data: {}

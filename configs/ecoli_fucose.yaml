@@ -1,0 +1,45 @@
+# ──────────────────────────────────────────────────────────────
+# Multiscale Route Hypothesis Platform — E. coli BL21 / Fucose
+# L-fucose production via GDP-mannose biosynthetic route
+# ──────────────────────────────────────────────────────────────
+
+organism: Escherichia_coli_BL21
+target: fucose_production
+
+gem:
+  model_path: examples/gems/Ecoli_BL21.xml
+
+context:
+  yc: 0.0           # not applicable (minimal medium)
+  dic: 0.0           # not applicable
+  t_max: 78.0        # simulation time (h) — 5L fed-batch
+  dye_conc: 0        # not applicable
+  temperature: 37    # °C
+
+route_hypothesis:
+  route_id: ECOLI_fucose_GDP_mannose
+  dye_code: ""
+  source: ecoli_fucose_cross_system_v1
+  description: >
+    GDP-mannose pathway to L-fucose production via engineered
+    E. coli BL21 in 5L fed-batch bioreactor. 17-step pathway
+    through glycolysis, mannose-6P, GDP-mannose, GDP-fucose,
+    and final dephosphorylation to extracellular L-fucose.
+  entry_reactions:
+    - glucose_uptake
+    - glycolysis_upper
+    - glycolysis_lower
+    - mannose6P_isomerase
+    - phosphomannomutase
+    - GDP_mannose_pyrophosphorylase
+    - GDP_mannose_dehydratase
+    - GDP_fucose_synthase
+    - fucose_phosphatase
+    - fucose_export
+
+expression:
+  enabled: false
+
+omics:
+  nmr: false
+  redox_balance: false

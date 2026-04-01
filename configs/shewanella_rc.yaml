@@ -1,0 +1,42 @@
+# ──────────────────────────────────────────────────────────────
+# Multiscale Route Hypothesis Platform — Shewanella LC6 / RC
+# Reactive Crimson via catechol branch to TCA
+# ──────────────────────────────────────────────────────────────
+
+organism: Shewanella_xiamenensis_LC6
+target: reactive_crimson_decolorization
+
+gem:
+  model_path: examples/gems/LC6_CANONICAL.xml
+
+context:
+  yc: 3.0
+  dic: 0.6
+  t_max: 48.0
+  dye_conc: 100
+  temperature: 30
+
+route_hypothesis:
+  route_id: RC_catechol_route
+  dye_code: RC
+  source: canonical_reconstruction_v1
+  description: >
+    Azoreductase-mediated reductive cleavage of Reactive Crimson,
+    producing amine fragments metabolized through catechol ortho-cleavage
+    pathway to succinate and acetyl-CoA, entering TCA cycle.
+
+expression:
+  enabled: true
+  simulate_hourly: true
+  genes_key:
+    - AzoR
+    - CymA
+    - YhhW
+    - fhuE_1
+    - fhuF
+    - iucA_iucC
+    - iucD
+
+omics:
+  nmr: true
+  redox_balance: true

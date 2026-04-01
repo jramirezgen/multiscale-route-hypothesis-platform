@@ -1,0 +1,43 @@
+# ──────────────────────────────────────────────────────────────
+# Multiscale Route Hypothesis Platform — Shewanella LC6 / DB
+# Direct Blue 71 via protocatechuate branch to TCA
+# ──────────────────────────────────────────────────────────────
+
+organism: Shewanella_xiamenensis_LC6
+target: direct_blue_71_decolorization
+
+gem:
+  model_path: examples/gems/LC6_CANONICAL.xml
+
+context:
+  yc: 3.0
+  dic: 0.6
+  t_max: 48.0
+  dye_conc: 100
+  temperature: 30
+
+route_hypothesis:
+  route_id: DB_protocatechuate_route
+  dye_code: DB
+  source: canonical_reconstruction_v1
+  description: >
+    Azoreductase-mediated reductive cleavage of Direct Blue 71 (tetrakis-azo),
+    producing naphthalene-derived aromatic fragments metabolized through
+    protocatechuate meta-cleavage pathway to pyruvate and oxaloacetate,
+    entering TCA cycle.
+
+expression:
+  enabled: true
+  simulate_hourly: true
+  genes_key:
+    - AzoR
+    - CymA
+    - YhhW
+    - fhuE_1
+    - fhuF
+    - iucA_iucC
+    - iucD
+
+omics:
+  nmr: true
+  redox_balance: true

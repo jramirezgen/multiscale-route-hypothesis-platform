@@ -1,0 +1,13 @@
+name: mrhp
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python>=3.9
+  - numpy>=1.21
+  - scipy>=1.7
+  - matplotlib>=3.5
+  - pyyaml>=5.4
+  - pip
+  - pip:
+    - -e .

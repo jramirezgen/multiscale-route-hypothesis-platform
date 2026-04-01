@@ -1,0 +1,33 @@
+# ──────────────────────────────────────────────────────────────
+# MRHP Minimal Config Template
+# Fill in the required fields and run: mrhp run --config this_file.yaml
+# ──────────────────────────────────────────────────────────────
+
+organism: YOUR_ORGANISM
+target: YOUR_TARGET
+
+context:
+  t_max: 48.0
+
+route_hypothesis:
+  route_id: YOUR_ROUTE_ID
+  dye_code: ""        # leave empty for non-dye systems
+  source: user_defined
+  description: >
+    Brief description of the metabolic route hypothesis.
+  steps:
+    - id: STEP_01
+      rxn: reaction_name
+      type: enzyme_type
+      substrates: [substrate_A]
+      products: [product_B]
+      enzyme: EnzymeName
+      gene: geneName
+      confidence: plausible   # exact | strong | plausible | speculative
+
+expression:
+  enabled: false
+
+omics:
+  nmr: false
+  redox_balance: false

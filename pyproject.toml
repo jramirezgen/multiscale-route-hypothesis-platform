@@ -1,0 +1,67 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools-scm>=8", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mrhp"
+version = "1.0.0"
+description = "Multiscale Route Hypothesis Platform — evaluate metabolic route hypotheses from YAML to phenotype prediction"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "J. Ramirez-Malule Lab"},
+]
+keywords = [
+    "systems-biology",
+    "metabolic-modeling",
+    "GEM",
+    "route-hypothesis",
+    "ODE-simulation",
+    "gene-expression",
+    "bridge-framework",
+    "phenotype-prediction",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    "numpy>=1.21",
+    "scipy>=1.7",
+    "matplotlib>=3.5",
+    "pyyaml>=5.4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov",
+    "ruff",
+]
+
+[project.urls]
+Homepage = "https://github.com/jramirezgen/multiscale-route-hypothesis-platform"
+Documentation = "https://github.com/jramirezgen/multiscale-route-hypothesis-platform/tree/main/docs"
+Repository = "https://github.com/jramirezgen/multiscale-route-hypothesis-platform"
+
+[project.scripts]
+mrhp = "mrhp.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"

@@ -1,0 +1,43 @@
+# ──────────────────────────────────────────────────────────────
+# Multiscale Route Hypothesis Platform — Shewanella LC6 / MO
+# Methyl Orange via DMPD branch to TCA
+# ──────────────────────────────────────────────────────────────
+
+organism: Shewanella_xiamenensis_LC6
+target: methyl_orange_decolorization
+
+gem:
+  model_path: examples/gems/LC6_CANONICAL.xml
+
+context:
+  yc: 3.0        # yeast extract (g/L)
+  dic: 0.6       # dissolved inorganic carbon (mM)
+  t_max: 48.0    # simulation time (h)
+  dye_conc: 100  # initial dye conc (mg/L)
+  temperature: 30  # °C
+
+route_hypothesis:
+  route_id: MO_DMPD_to_TCA
+  dye_code: MO
+  source: canonical_reconstruction_v1
+  description: >
+    Azoreductase-mediated reductive cleavage of methyl orange into
+    DMPD and sulfanilic acid, followed by oxidative ring opening of
+    DMPD via catechol/protocatechuate branch to succinate/acetyl-CoA,
+    converging in TCA cycle.
+
+expression:
+  enabled: true
+  simulate_hourly: true
+  genes_key:
+    - AzoR
+    - CymA
+    - YhhW
+    - fhuE_1
+    - fhuF
+    - iucA_iucC
+    - iucD
+
+omics:
+  nmr: true
+  redox_balance: true

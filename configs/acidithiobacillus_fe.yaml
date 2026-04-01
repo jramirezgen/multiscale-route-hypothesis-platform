@@ -1,0 +1,77 @@
+# ──────────────────────────────────────────────────────────────
+# Multiscale Route Hypothesis Platform — A. ferrooxidans / Fe²⁺
+# Fe²⁺ oxidation via downhill ETC (rus operon)
+# ──────────────────────────────────────────────────────────────
+
+organism: Acidithiobacillus_ferrooxidans_ATCC23270
+target: fe2_oxidation
+
+gem:
+  model_path: examples/gems/Aferro_ATCC23270_curated_v6.xml
+
+context:
+  yc: 0.0           # not applicable (autotrophic)
+  dic: 0.0           # not applicable
+  t_max: 72.0        # simulation time (h)
+  dye_conc: 0        # not applicable
+  temperature: 30    # °C
+  fe2_initial: 12.2  # g/L initial Fe²⁺
+  biomass_initial: 0.01  # normalized
+
+route_hypothesis:
+  route_id: Fe2_downhill_ETC
+  dye_code: ""
+  source: acidithiobacillus_cross_system_v1
+  description: >
+    Downhill electron transfer chain for Fe²⁺ oxidation in
+    Acidithiobacillus ferrooxidans. Electrons flow from Fe²⁺
+    through Cyc2 → Rusticyanin → Cyc1 → CoxB → CoxA (aa3)
+    terminal oxidase, reducing O2 to H2O.
+  steps:
+    - id: AF01
+      rxn: fe2_to_cyc2
+      type: electron_transfer
+      substrates: [Fe2]
+      products: [Cyc2_red]
+      enzyme: Cyc2
+      gene: cyc2
+      confidence: exact
+    - id: AF02
+      rxn: cyc2_to_rusticyanin
+      type: electron_transfer
+      substrates: [Cyc2_red]
+      products: [Rus_red]
+      enzyme: Rusticyanin
+      gene: rus
+      confidence: exact
+    - id: AF03
+      rxn: rusticyanin_to_cyc1
+      type: electron_transfer
+      substrates: [Rus_red]
+      products: [Cyc1_red]
+      enzyme: Cyc1
+      gene: cyc1
+      confidence: exact
+    - id: AF04
+      rxn: cyc1_to_coxB
+      type: electron_transfer
+      substrates: [Cyc1_red]
+      products: [Cox_red]
+      enzyme: CoxB
+      gene: coxB
+      confidence: exact
+    - id: AF05
+      rxn: terminal_oxidase
+      type: terminal_oxidase
+      substrates: [Cox_red, O2]
+      products: [H2O]
+      enzyme: CoxA_aa3
+      gene: coxA
+      confidence: exact
+
+expression:
+  enabled: false
+
+omics:
+  nmr: false
+  redox_balance: false
