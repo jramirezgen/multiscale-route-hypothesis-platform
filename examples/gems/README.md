@@ -15,9 +15,11 @@ in each YAML points to the model file. Example:
 
 ```yaml
 gem:
-  model_path: "examples/gems/LC6_CANONICAL.xml"
+  model_path: examples/gems/LC6_CANONICAL.xml
 ```
 
-## Format
+## Source
 
-All models are SBML Level 3 Version 1 with FBC v2 package.
+- **LC6**: Curated from iMR1_799 donor + LC6 genomic annotation
+- **E. coli BL21**: iML1515-derived, BL21(DE3) subset
+- **A. ferrooxidans**: iAF692-derived, curated v6
