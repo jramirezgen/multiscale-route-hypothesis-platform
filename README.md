@@ -122,7 +122,7 @@ If you use MRHP in your research, please cite:
 
 ```bibtex
 @software{ramirez2026mrhp,
-  author = {Ramirez-Bautista, J.},
+  author = {Ramirez, J.},
   title = {Multiscale Route Hypothesis Platform},
   year = {2026},
   version = {1.0.0},
