@@ -272,3 +272,47 @@ NMR_SA = [
     (0, 0.0), (2, 5.0), (4, 15.0), (6, 35.0),
     (8, 55.0), (10, 70.0), (12, 80.0),
 ]
+
+# ═══════════════════════════════════════════════════════════════
+# CORE MODEL REVALIDATION RESULTS (v1.1.0, frozen)
+# ═══════════════════════════════════════════════════════════════
+# Core bridge canonical:
+#   y(t) = y_max * (1 - exp(-H(t)^β))
+#   H(t) = ∫ λ · dΦ/dt dt
+#   3 free parameters: λ, β, y_max
+#   Ψ(t) and B^α removed from canonical formula
+#
+# Full (legacy) bridge:
+#   H(t) = ∫ λ · dΦ/dt · Ψ · B^α dt
+#   Includes Ψ(t) = 1 - exp(-k_p·t) and B^α
+
+CORE_REVALIDATION = {
+    "verdict": "CORE_MODEL_SUFFICIENT",
+    "shewanella": {
+        "core3_R2": 0.9839,
+        "full_R2": 0.9916,
+        "loss": 0.0077,
+        "n_conditions": 25,
+    },
+    "ecoli": {
+        "core_R2": 0.9815,
+        "full_R2": 0.9959,
+        "loss": 0.0144,
+        "n_datasets": 7,
+    },
+    "acidithiobacillus": {
+        "core_R2": 0.9921,
+        "full_R2": 0.9942,
+        "loss": 0.0021,
+        "n_datasets": 1,
+    },
+}
+
+# λ_b structural law: log10(λ_b) = 0.918 - 1.013 × N_NADH
+LAMBDA_B_LAW = {
+    "intercept": 0.9181,
+    "slope": -1.0127,
+    "R2": 0.999,
+    "formula": "log10(lambda_b) = 0.918 - 1.013 * N_NADH",
+    "interpretation": "redox cost per observable (NADH equivalents)",
+}

@@ -18,15 +18,56 @@ Parameters per dye code (MO, RC, DB):
 - `t_lag`: lag phase duration (h)
 - Additional context-dependent corrections
 
-## Bridge V5 Dual Canonical
+## Bridge — Core Model (Canonical, v1.1.0)
 
-Connects top-down phenotype prediction (V4 Hill) with bottom-up
-ODE metabolic simulation via a dual canonical bridge function.
+The canonical bridge connects metabolic drive (Φ) to observable phenotype:
 
-Key parameters:
-- `Vmax`, `Kd`: substrate-level bridge kinetics
-- `alpha_p`, `k_p`: phenotype coupling
-- `lam`: bridge scaling factor
+```
+y(t) = y_max · (1 − exp(−H(t)^β))
+H(t) = ∫ λ · dΦ/dt dt
+```
+
+3 free parameters:
+- `λ`: coupling constant (metabolic-to-phenotype scale factor)
+- `β`: temporal heterogeneity exponent (< 1, stretched exponential)
+- `y_max`: maximum observable level
+
+### Structural Law
+
+```
+log₁₀(λ_b) = 0.918 − 1.013 × N_NADH
+```
+
+λ reflects redox cost per NADH equivalent consumed in observable transformation.
+
+### Cross-System Revalidation (Core Model)
+
+| System | R²_core | R²_full | Loss |
+|--------|---------|---------|------|
+| Shewanella (25 conditions) | 0.9839 | 0.9916 | 0.0077 |
+| E. coli (7 datasets) | 0.9815 | 0.9959 | 0.0144 |
+| Acidithiobacillus (1 experiment) | 0.9921 | 0.9942 | 0.0021 |
+
+Verdict: **CORE_MODEL_SUFFICIENT**
+
+## Bridge — Full Model (Legacy V5)
+
+The full bridge includes activation gate and capacity feedback:
+
+```
+H(t) = ∫ λ · dΦ/dt · Ψ(t) · B^α dt
+Ψ(t) = 1 − exp(−k_p · t)
+B = min(D_v4 / 100, 1)
+```
+
+Use `bridge.mode: full` in YAML config to select this mode.
+
+Key parameters per dye:
+- `Vmax`: maximum bridge driving rate
+- `Kd`: dye inhibition constant
+- `alpha_p`: substrate-dye interaction
+- `k_p`: activation rate constant
+- `lam`: coupling constant (λ)
 
 ## Expression V3 ODE
 
@@ -47,7 +88,7 @@ Where:
 27 gene calibrations for Shewanella LC6 across MO, RC, DB:
 
 | Gene | Dyes | Calibration Source |
-|------|------|---------|
+|------|------|--------------------|
 | AzoR | MO, RC, DB | RT-qPCR ΔΔCt |
 | CymA | MO, RC, DB | RT-qPCR ΔΔCt |
 | YhhW | MO, RC | RT-qPCR ΔΔCt |

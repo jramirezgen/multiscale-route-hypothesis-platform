@@ -1,4 +1,4 @@
-""" 
+"""
 MRHP — Multiscale Route Hypothesis Platform
 ============================================
 
@@ -13,7 +13,7 @@ Quick start::
 
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 from mrhp.config.loader import load_config  # noqa: F401
 from mrhp.core.pipeline import run_pipeline, run_single  # noqa: F401

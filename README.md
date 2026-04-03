@@ -7,17 +7,47 @@ dynamics, and omics evidence.
 ## Features
 
 - **10-phase pipeline**: From config to scored hypothesis in one command
-- **Frozen models**: V4 Hill phenotype, Bridge V5 dual canonical, Expression V3 ODE
+- **Core bridge (canonical)**: `y = y_max · (1 − exp(−H^β))`, `H = ∫ λ · dΦ/dt dt`
+- **Full bridge (legacy)**: Includes Ψ(t) activation and B^α capacity feedback
+- **Frozen models**: V4 Hill phenotype, Bridge V5 parameters, Expression V3 ODE
 - **Cross-system validated**: Shewanella (azo dyes), E. coli (L-fucose), Acidithiobacillus (Fe²⁺)
 - **3 usage modes**: CLI, Python API, AI-assisted hooks
 - **Publication-grade figures**: 5 figure types with matplotlib GridSpec
+
+## Bridge Model
+
+### Core (canonical, default)
+
+```
+y(t) = y_max · (1 − exp(−H(t)^β))
+H(t) = ∫ λ · dΦ/dt dt
+```
+
+3 free parameters: λ (coupling), β (temporal heterogeneity), y_max (plateau).
+
+### Full (legacy v5)
+
+```
+H(t) = ∫ λ · dΦ/dt · Ψ(t) · B^α dt
+```
+
+Includes Ψ(t) = 1 − exp(−k_p·t) activation gate and B^α capacity feedback.
+Use `bridge.mode: full` in config to select.
+
+### Structural Law
+
+```
+log₁₀(λ_b) = 0.918 − 1.013 × N_NADH
+```
+
+λ reflects redox cost per observable (NADH equivalents per azo bond).
 
 ## Quick Start
 
 ### Install
 
 ```bash
-git clone https://github.com/jramirezgen/multiscale-route-hypothesis-platform.git
+git clone https://github.com/YOUR_USER/multiscale-route-hypothesis-platform.git
 cd multiscale-route-hypothesis-platform
 pip install -e .
 ```
@@ -66,9 +96,9 @@ diag = hook_doctor("configs/shewanella_mo.yaml")
 src/mrhp/
 ├── config/loader.py          # YAML config loading
 ├── core/pipeline.py          # 10-phase orchestrator
-├── models/frozen.py          # Frozen parameters & routes
+├── models/frozen.py          # Frozen parameters, routes & revalidation results
 ├── simulation/               # Route builder + ODE solver
-├── bridge/engine.py          # V4 Hill + V5 bridge
+├── bridge/engine.py          # Bridge: core (canonical) + full (legacy)
 ├── expression/simulator.py   # Gene expression ODE
 ├── integration/omics.py      # Omics evidence
 ├── scoring/scorer.py         # Sync scoring
@@ -91,13 +121,13 @@ Weighted synchronization score across 4 evidence layers:
 
 ## Cross-System Validation
 
-| Organism | Target | R² | Classification |
-|----------|--------|----|----------------|
-| *S. xiamenensis* LC6 | Azo dye degradation | 0.9545 | CANONICAL_ROUTE_CONFIRMED |
-| *E. coli* BL21 | L-fucose production | 0.9990 | ROUTE_COMPATIBLE |
-| *A. ferrooxidans* | Fe²⁺ oxidation | 0.9413 | ROUTE_COMPATIBLE |
+| Organism | Target | R²_core | R²_full | Verdict |
+|----------|--------|---------|---------|---------|
+| *S. xiamenensis* LC6 | Azo dye degradation (25 conds) | 0.9839 | 0.9916 | CORE_MODEL_SUFFICIENT |
+| *E. coli* K-12 | L-fucose production (7 datasets) | 0.9815 | 0.9959 | CORE_MODEL_SUFFICIENT |
+| *A. ferrooxidans* | Fe²⁺ oxidation | 0.9921 | 0.9942 | CORE_MODEL_SUFFICIENT |
 
-Platform classification: **UNIVERSAL_PREDICTIVE**
+Platform classification: **CORE_MODEL_SUFFICIENT** — R² > 0.95 across all systems with < 0.02 loss.
 
 ## Requirements
 
@@ -106,11 +136,6 @@ Platform classification: **UNIVERSAL_PREDICTIVE**
 - scipy >= 1.7
 - matplotlib >= 3.5
 - pyyaml >= 5.4
-
-## Example GEM Models
-
-Canonical genome-scale metabolic models are included in `examples/gems/` for
-reproducing the published validation results.
 
 ## License
 
@@ -122,11 +147,11 @@ If you use MRHP in your research, please cite:
 
 ```bibtex
 @software{ramirez2026mrhp,
-  author = {Ramirez, J.},
+  author = {Ramirez-Bautista, J.},
   title = {Multiscale Route Hypothesis Platform},
   year = {2026},
   version = {1.0.0},
-  url = {https://github.com/jramirezgen/multiscale-route-hypothesis-platform}
+  url = {https://github.com/YOUR_USER/multiscale-route-hypothesis-platform}
 }
 ```
 

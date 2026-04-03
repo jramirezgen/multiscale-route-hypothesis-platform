@@ -1,4 +1,14 @@
-"""Bridge framework: metabolism \u2192 phenotype prediction."""
+"""Bridge framework: metabolism → phenotype prediction.
+
+Supports two modes:
+  - "core" (canonical, default): y = y_max * (1 - exp(-H^β))
+      H = ∫ λ · dΦ/dt dt   (no Ψ, no B^α)
+      3 free parameters: λ, β, y_max
+
+  - "full" (legacy v5): y = y_max * (1 - exp(-H^β))
+      H = ∫ λ · dΦ/dt · Ψ · B^α dt
+      Includes activation gate Ψ(t) and capacity feedback B^α
+"""
 
 import os
 
@@ -7,6 +17,10 @@ from scipy.integrate import cumulative_trapezoid
 
 from mrhp.models.frozen import V4_PARAMS, BRIDGE_V5_PARAMS
 from mrhp.io.writers import write_json, write_tsv, safe_div
+
+# Valid bridge modes
+BRIDGE_MODES = ("core", "full")
+DEFAULT_BRIDGE_MODE = "core"
 
 
 def compute_v4_phenotype(dye_code, context, t_span=(0, 48), dt=0.5):
@@ -31,10 +45,36 @@ def compute_v4_phenotype(dye_code, context, t_span=(0, 48), dt=0.5):
     return {"t": t, "D": D, "Dmax": Dmax, "Vmax": Vmax, "n": n, "lag": lag, "h_SI": h_SI}
 
 
-def compute_bridge(dye_code, context, sim_result=None, t_span=(0, 48), dt=0.5):
-    """Compute bridge v5 prediction: metabolism \u2192 phenotype."""
+def compute_bridge(dye_code, context, sim_result=None, t_span=(0, 48), dt=0.5,
+                   mode=None, beta=None):
+    """Compute bridge prediction: metabolism → phenotype.
+
+    Parameters
+    ----------
+    dye_code : str
+        Dye identifier ("MO", "RC", "DB").
+    context : dict
+        Must contain "yc" and "dic".
+    sim_result : dict, optional
+        ODE simulation result for bottom-up bridge.
+    t_span : tuple
+        Time range (start, end) in hours.
+    dt : float
+        Time step in hours.
+    mode : str, optional
+        Bridge mode: "core" (canonical, no Ψ/B^α) or "full" (legacy v5).
+        Defaults to "core". Can also be set via context["bridge_mode"].
+    beta : float, optional
+        Override β value. If None, uses 0.5 (legacy default).
+    """
     if dye_code not in BRIDGE_V5_PARAMS:
         return None
+
+    # Resolve mode from parameter or context
+    if mode is None:
+        mode = context.get("bridge_mode", DEFAULT_BRIDGE_MODE)
+    if mode not in BRIDGE_MODES:
+        raise ValueError(f"Invalid bridge mode '{mode}'. Must be one of {BRIDGE_MODES}")
 
     bp = BRIDGE_V5_PARAMS[dye_code]
     lam = bp["lam"]
@@ -59,30 +99,37 @@ def compute_bridge(dye_code, context, sim_result=None, t_span=(0, 48), dt=0.5):
     Phi = Vmax_b * S * t / (Kd + I + alpha_p * S)
     dPhi_dt = np.gradient(Phi, t)
 
-    Psi = 1.0 - np.exp(-k_p * t)
-
-    alpha_B = 1.0
-    h = lam * (dPhi_dt * Psi) * np.power(np.maximum(B, 1e-12), alpha_B)
+    if mode == "core":
+        # Core canonical: H = ∫ λ · dΦ/dt dt (no Ψ, no B^α)
+        h = lam * dPhi_dt
+        Psi = np.ones_like(t)  # not used, but stored for export
+    else:
+        # Full legacy: H = ∫ λ · dΦ/dt · Ψ · B^α dt
+        Psi = 1.0 - np.exp(-k_p * t)
+        alpha_B = 1.0
+        h = lam * (dPhi_dt * Psi) * np.power(np.maximum(B, 1e-12), alpha_B)
 
     H = np.zeros_like(t)
     H[1:] = cumulative_trapezoid(h, t)
 
-    beta = 0.5
+    if beta is None:
+        beta = context.get("beta", 0.5)
     y_max = V4_PARAMS[dye_code]["Dmax"]
     y_bridge = y_max * (1.0 - np.exp(-np.power(np.maximum(H, 0), beta)))
 
     y_bu = None
     if sim_result is not None:
-        y_bu = _bridge_from_simulation(sim_result, bp, t, B, beta, y_max)
+        y_bu = _bridge_from_simulation(sim_result, bp, t, B, beta, y_max, mode)
 
     return {
         "t": t, "D_v4": D_td, "y_bridge": y_bridge, "y_bu": y_bu,
         "Phi": Phi, "dPhi_dt": dPhi_dt, "Psi": Psi,
         "h": h, "H": H, "B": B, "lam": lam, "beta": beta,
+        "mode": mode,
     }
 
 
-def _bridge_from_simulation(sim_result, bp, t_bridge, B, beta, y_max):
+def _bridge_from_simulation(sim_result, bp, t_bridge, B, beta, y_max, mode="core"):
     """Use bottom-up ODE substrate consumption as metabolic drive."""
     t_sim = sim_result["t"]
     y_sim = sim_result["y"]
@@ -103,8 +150,13 @@ def _bridge_from_simulation(sim_result, bp, t_bridge, B, beta, y_max):
     drive = -np.gradient(sub_interp, t_bridge)
     drive = np.maximum(drive, 0)
 
-    Psi = 1.0 - np.exp(-bp["k_p"] * t_bridge)
-    h_bu = bp["lam"] * drive * Psi * np.maximum(B, 1e-12)
+    if mode == "core":
+        # Core: H = ∫ λ · drive dt (no Ψ, no B^α)
+        h_bu = bp["lam"] * drive
+    else:
+        # Full: H = ∫ λ · drive · Ψ · B^α dt
+        Psi = 1.0 - np.exp(-bp["k_p"] * t_bridge)
+        h_bu = bp["lam"] * drive * Psi * np.maximum(B, 1e-12)
 
     H_bu = np.zeros_like(t_bridge)
     H_bu[1:] = cumulative_trapezoid(h_bu, t_bridge)

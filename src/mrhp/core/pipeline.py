@@ -83,10 +83,12 @@ def run_single(cfg, yaml_path, base_dir):
         # Phase 4
         log("Phase 4: Bridge + phenotype prediction...")
         context = cfg.get("context", {})
-        bridge_result = compute_bridge(dye_code, context, sim_result)
+        bridge_mode = cfg.get("bridge", {}).get("mode", "core")
+        bridge_result = compute_bridge(dye_code, context, sim_result, mode=bridge_mode)
         bridge_eval = evaluate_bridge(bridge_result)
         export_bridge(bridge_result, bridge_eval, output_dir)
-        log(f"  Bridge R2: {bridge_eval.get('R2_bridge_vs_v4', 'N/A'):.4f}")
+        log(f"  Bridge R2: {bridge_eval.get('R2_bridge_vs_v4', 'N/A'):.4f}"
+            f"  mode={bridge_result.get('mode', '?')}")
         results["bridge_result"] = bridge_result
         results["bridge_eval"] = bridge_eval
 

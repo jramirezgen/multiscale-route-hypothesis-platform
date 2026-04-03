@@ -43,3 +43,22 @@ def test_expression_calibrations():
         assert isinstance(gene, str)
         assert isinstance(dye, str)
         assert isinstance(entry[2], (int, float))
+
+
+def test_core_revalidation_structure():
+    """Test CORE_REVALIDATION frozen dict has required structure."""
+    from mrhp.models.frozen import CORE_REVALIDATION
+    assert CORE_REVALIDATION["verdict"] == "CORE_MODEL_SUFFICIENT"
+    for system in ["shewanella", "ecoli", "acidithiobacillus"]:
+        assert system in CORE_REVALIDATION
+        assert "core_R2" in CORE_REVALIDATION[system] or "core3_R2" in CORE_REVALIDATION[system]
+
+
+def test_lambda_b_law_structure():
+    """Test LAMBDA_B_LAW frozen dict has required structure."""
+    from mrhp.models.frozen import LAMBDA_B_LAW
+    assert "intercept" in LAMBDA_B_LAW
+    assert "slope" in LAMBDA_B_LAW
+    assert "R2" in LAMBDA_B_LAW
+    assert "formula" in LAMBDA_B_LAW
+    assert LAMBDA_B_LAW["R2"] > 0.99

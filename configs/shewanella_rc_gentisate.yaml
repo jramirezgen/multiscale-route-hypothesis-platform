@@ -77,3 +77,19 @@ route_hypothesis:
       gene: nagL
       ec: "3.7.1.x"
       confidence: plausible
+
+expression:
+  enabled: true
+  simulate_hourly: true
+  genes_key:
+    - AzoR
+    - CymA
+    - YhhW
+    - fhuE_1
+    - fhuF
+    - iucA_iucC
+    - iucD
+
+omics:
+  nmr: true
+  redox_balance: true

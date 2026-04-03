@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mrhp"
-version = "1.0.0"
+version = "1.1.0"
 description = "Multiscale Route Hypothesis Platform — evaluate metabolic route hypotheses from YAML to phenotype prediction"
 readme = "README.md"
 license = {text = "MIT"}
@@ -48,9 +48,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/jramirezgen/multiscale-route-hypothesis-platform"
-Documentation = "https://github.com/jramirezgen/multiscale-route-hypothesis-platform/tree/main/docs"
-Repository = "https://github.com/jramirezgen/multiscale-route-hypothesis-platform"
+Homepage = "https://github.com/ramirez-malule-lab/multiscale-route-hypothesis-platform"
+Documentation = "https://github.com/ramirez-malule-lab/multiscale-route-hypothesis-platform/tree/main/docs"
+Repository = "https://github.com/ramirez-malule-lab/multiscale-route-hypothesis-platform"
 
 [project.scripts]
 mrhp = "mrhp.cli:main"

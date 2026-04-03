@@ -19,6 +19,6 @@ def test_all_imports():
     from mrhp.core.pipeline import run_single
     from mrhp.skill_mode.hooks import hook_run, hook_doctor
 
-    assert __version__ == "1.0.0"
+    assert __version__ == "1.1.0"
     assert callable(run_pipeline)
     assert callable(hook_run)

@@ -19,6 +19,8 @@ def test_full_pipeline_mo():
         pytest.skip("Config file not found")
 
     cfg = load_config(cfg_path)
+    # Use full bridge mode — V5 params were calibrated for full model
+    cfg.setdefault("bridge", {})["mode"] = "full"
 
     with tempfile.TemporaryDirectory() as tmpdir:
         result = run_single(cfg, cfg_path, tmpdir)
